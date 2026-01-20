@@ -73,6 +73,8 @@ NEXT_PUBLIC_CONVEX_URL=your_convex_url
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 CLERK_JWT_ISSUER_DOMAIN=your_clerk_jwt_issuer_domain
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
 ### 4. Set Up Convex
@@ -96,7 +98,36 @@ npx convex dev
 4. Create a JWT template in Clerk for Convex integration
 5. Copy the JWT issuer domain and add it to `.env.local` and Convex environment variables
 
-### 6. Run the Development Server
+### 6. Set Up Inngest
+
+1. Install the Inngest CLI (if not already installed):
+   ```bash
+   npm install -g inngest-cli
+   ```
+
+2. Start the Inngest Dev Server in a separate terminal:
+   ```bash
+   npx inngest-cli@latest dev
+   ```
+   This will start the local Inngest server at `http://localhost:8288`
+
+3. The Inngest Dev Server will automatically discover your functions from `/api/inngest` route
+
+### 7. Set Up AI Provider API Keys
+
+The receipt scanning agents use OpenAI and Anthropic models. You need API keys from both:
+
+1. **OpenAI API Key:**
+   - Sign up at [OpenAI](https://platform.openai.com/) or use your existing account
+   - Go to API Keys section and create a new key
+   - Add it to `.env.local` as `OPENAI_API_KEY`
+
+2. **Anthropic API Key:**
+   - Sign up at [Anthropic](https://console.anthropic.com/) or use your existing account
+   - Go to API Keys section and create a new key
+   - Add it to `.env.local` as `ANTHROPIC_API_KEY`
+
+### 8. Run the Development Server
 
 ```bash
 npm run dev
