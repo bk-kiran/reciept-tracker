@@ -80,7 +80,7 @@ const ReceiptList = () => {
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full max-w-full">
             <div className="mb-6">
                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Your Receipts</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -88,30 +88,29 @@ const ReceiptList = () => {
                 </p>
             </div>
             
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm">
-                <div className="flex justify-center overflow-x-auto md:overflow-x-visible">
-                    <div className="w-[95%] max-w-full">
-                        <Table className="w-full" style={{ tableLayout: 'fixed' }}>
-                            <colgroup>
-                                <col style={{ width: '5%' }} />
-                                <col style={{ width: '28%' }} />
-                                <col style={{ width: '12%' }} />
-                                <col style={{ width: '8%' }} />
-                                <col style={{ width: '10%' }} />
-                                <col style={{ width: '12%' }} />
-                                <col style={{ width: '5%' }} />
-                            </colgroup>
-                            <TableHeader>
-                                <TableRow className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
-                                    <TableHead className="text-center px-3 text-sm font-semibold">Type</TableHead>
-                                    <TableHead className="text-left px-3 text-sm font-semibold">Name</TableHead>
-                                    <TableHead className="hidden sm:table-cell px-3 text-sm font-semibold">Uploaded</TableHead>
-                                    <TableHead className="text-right px-3 text-sm font-semibold">Size</TableHead>
-                                    <TableHead className="text-right px-3 text-sm font-semibold">Total</TableHead>
-                                    <TableHead className="text-center px-3 text-sm font-semibold">Status</TableHead>
-                                    <TableHead className="text-right px-3"> </TableHead>
-                                </TableRow>
-                            </TableHeader>
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm overflow-hidden">
+                <div className="w-full">
+                    <Table className="table-fixed w-full">
+                        <colgroup>
+                            <col className="w-[6%]" />
+                            <col className="w-[32%]" />
+                            <col className="w-[20%]" />
+                            <col className="w-[12%]" />
+                            <col className="w-[14%]" />
+                            <col className="w-[13%]" />
+                            <col className="w-[3%]" />
+                        </colgroup>
+                        <TableHeader>
+                            <TableRow className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+                                <TableHead className="px-2 py-2 text-[11px] font-semibold text-center">Type</TableHead>
+                                <TableHead className="px-2 py-2 text-[11px] font-semibold">Name</TableHead>
+                                <TableHead className="px-2 py-2 text-[11px] font-semibold text-right">Uploaded</TableHead>
+                                <TableHead className="px-2 py-2 text-[11px] font-semibold text-right">Size</TableHead>
+                                <TableHead className="px-2 py-2 text-[11px] font-semibold text-right">Total</TableHead>
+                                <TableHead className="px-2 py-2 text-[11px] font-semibold text-center">Status</TableHead>
+                                <TableHead className="px-1 py-2"></TableHead>
+                            </TableRow>
+                        </TableHeader>
 
                         <TableBody>
                             {receipts.map((receipt: Doc<"receipts">, index: number) => {
@@ -126,64 +125,67 @@ const ReceiptList = () => {
                                         }`}
                                         onClick={() => router.push(`/receipt/${receipt._id}`)}
                                     >
-                                        <TableCell className="text-center px-3 py-3 overflow-hidden">
-                                            <FileText className="h-4 w-4 text-red-500 dark:text-red-400 mx-auto flex-shrink-0" />
+                                        <TableCell className="px-2 py-2.5 text-center">
+                                            <FileText className="h-3.5 w-3.5 text-red-500 dark:text-red-400 mx-auto" />
                                         </TableCell>
 
-                                        <TableCell className="font-medium text-gray-900 dark:text-gray-100 px-3 py-3 overflow-hidden">
+                                        <TableCell className="px-2 py-2.5">
                                             <div 
-                                                className="truncate text-sm"
+                                                className="font-medium text-gray-900 dark:text-gray-100 text-[13px] truncate overflow-hidden"
                                                 title={fileName}
-                                                style={{ maxWidth: '100%' }}
                                             >
                                                 {fileName}
                                             </div>
                                         </TableCell>
 
-                                        <TableCell className="text-gray-600 dark:text-gray-400 text-xs whitespace-nowrap px-3 py-3 overflow-hidden hidden sm:table-cell">
-                                            {formatCompactDate(receipt.uploadedAt)}
-                                        </TableCell>
-
-                                        <TableCell className="text-gray-600 dark:text-gray-400 text-xs whitespace-nowrap text-right px-3 py-3 overflow-hidden">
-                                            {formatBytes(receipt.size)}
-                                        </TableCell>
-
-                                        <TableCell className="font-medium text-gray-900 dark:text-gray-100 text-xs whitespace-nowrap text-right px-3 py-3 overflow-hidden">
-                                            {receipt.transactionAmount ? (
-                                                <span>
-                                                    {receipt.currency && receipt.currency !== 'USD' ? receipt.currency : ''}
-                                                    {receipt.transactionAmount}
-                                                    {!receipt.currency || receipt.currency === 'USD' ? ' USD' : ''}
-                                                </span>
-                                            ) : (
-                                                <span className="text-gray-400 dark:text-gray-500">-</span>
-                                            )}
-                                        </TableCell>
-
-                                        <TableCell className="text-center px-3 py-3 overflow-visible">
-                                            <span
-                                                className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap
-                                                ${
-                                                    receipt.status === "pending" 
-                                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                                                    receipt.status === "processed" 
-                                                        ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" :
-                                                        "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400" 
-                                                }`}
-                                            >
-                                                {receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1)}
+                                        <TableCell className="px-2 py-2.5 text-right">
+                                            <span className="text-gray-600 dark:text-gray-400 text-[11px] whitespace-nowrap">
+                                                {formatCompactDate(receipt.uploadedAt)}
                                             </span>
                                         </TableCell>
 
-                                        <TableCell className="text-right px-3 py-3 overflow-visible">
-                                            <ChevronRight className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                        <TableCell className="px-2 py-2.5 text-right">
+                                            <span className="text-gray-600 dark:text-gray-400 text-[11px] whitespace-nowrap">
+                                                {formatBytes(receipt.size)}
+                                            </span>
+                                        </TableCell>
+
+                                        <TableCell className="px-2 py-2.5 text-right">
+                                            <span className="font-medium text-gray-900 dark:text-gray-100 text-[11px] whitespace-nowrap">
+                                                {receipt.transactionAmount ? (
+                                                    <>
+                                                        {receipt.transactionAmount}
+                                                    </>
+                                                ) : (
+                                                    <span className="text-gray-400 dark:text-gray-500">-</span>
+                                                )}
+                                            </span>
+                                        </TableCell>
+
+                                        <TableCell className="px-2 py-2.5 text-center">
+                                            <div className="flex justify-center">
+                                                <div
+                                                    className={`h-2 w-2 rounded-full
+                                                    ${
+                                                        receipt.status === "pending" 
+                                                            ? "bg-yellow-500 dark:bg-yellow-400" :
+                                                        receipt.status === "processed" 
+                                                            ? "bg-green-500 dark:bg-green-400" :
+                                                            "bg-red-500 dark:bg-red-400" 
+                                                    }`}
+                                                    title={receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1)}
+                                                />
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell className="px-1 py-2.5">
+                                            <ChevronRight className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />
                                         </TableCell>
                                     </TableRow>
                                 )
                             })}
                         </TableBody>
-                        </Table>
-                    </div>
+                    </Table>
                 </div>
             </div>
         </div>
