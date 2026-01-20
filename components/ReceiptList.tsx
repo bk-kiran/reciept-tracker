@@ -97,7 +97,7 @@ const ReceiptList = () => {
                                 <TableRow 
                                     key={receipt._id}
                                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-100 dark:border-gray-800"
-                                    onClick={() => router.push(`/receipts/${receipt._id}`)}
+                                    onClick={() => router.push(`/receipt/${receipt._id}`)}
                                 >
                                     <TableCell className="text-center py-3 px-1.5 align-top">
                                         <FileText className="h-5 w-5 text-red-500 dark:text-red-400 mx-auto" />
