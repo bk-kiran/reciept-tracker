@@ -1,8 +1,9 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import convex from "@/lib/ConvexClient";
-import {createAgent, createTool, openai} from "@inngest/agent-kit";
-import { z, } from "zod";
+import {createAgent, createTool} from "@inngest/agent-kit";
+import { openai } from "inngest";
+import { z } from "zod";
 
 const saveToDatabaseTool = createTool({
     name: "saveToDatabase",
@@ -111,6 +112,6 @@ export const databaseAgent = createAgent({
         defaultParameters: {
             max_completion_tokens: 1000,
         }
-    }),
+    }) as any,
     tools: [saveToDatabaseTool]
 })
