@@ -9,6 +9,9 @@ import Link from "next/link"
 import { ChevronLeft, FileText, Lightbulb, Sparkles } from "lucide-react"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import { getFileDownloadUrl } from "@/actions/getFileDownloadUrl"
+import { deleteReceipt } from "@/actions/deleteReceipt"
 
 
 
@@ -18,6 +21,7 @@ const Receipt = () => {
     const router = useRouter()
     const [isDeleting, setIsDeleting] = useState(false)
     const [isLoadingDownload, setIsLoadingDownload] = useState(false)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     const receipt = useQuery(
         api.receipts.getReceiptById,
@@ -31,11 +35,63 @@ const Receipt = () => {
     ) 
 
     const handleDownload = async () => {
-        return ""
+        if (!receipt || !receipt._id) return
+
+        try {
+            setIsLoadingDownload(true)
+
+            const result = await getFileDownloadUrl(receipt.fileId)
+
+            if (!result.success) {
+                throw new Error(result.error || "Failed to get download URL")
+            }
+
+            const link = document.createElement("a")
+            if (result.downloadUrl) {
+                link.href = result.downloadUrl
+                link.download = receipt.fileName || "receipt.pdf"
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+            } else {
+                throw new Error("Download URL not available")
+            }
+
+        } catch (error) {
+            console.error("Failed to download receipt", error)
+            toast.error(error instanceof Error ? error.message : "Failed to download receipt")
+        } finally {
+            setIsLoadingDownload(false)
+        }
     }
 
     const handleDeleteReceipt = async () => {
-        return ""
+        if (!receiptId) return
+
+        if (!showDeleteConfirm) {
+            setShowDeleteConfirm(true)
+            toast.error("Click Delete again to confirm", {
+                action: {
+                    label: "Cancel",
+                    onClick: () => setShowDeleteConfirm(false)
+                },
+                duration: 5000,
+            })
+            return
+        }
+
+        try {
+            setIsDeleting(true)
+            const result = await deleteReceipt(receiptId as Id<"receipts">)
+            toast.success("Receipt deleted successfully")
+            router.push("/receipts")
+        } catch (error) {
+            toast.error("Failed to delete receipt")
+            console.error(error)
+        } finally {
+            setIsDeleting(false)
+            setShowDeleteConfirm(false)
+        }
     }
 
     useEffect(() => {
